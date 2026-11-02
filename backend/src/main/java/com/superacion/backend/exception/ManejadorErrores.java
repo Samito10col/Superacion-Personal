@@ -15,24 +15,33 @@ public class ManejadorErrores {
 
     @ExceptionHandler(EmailYaRegistradoException.class)
     public ProblemDetail emailYaRegistrado(EmailYaRegistradoException ex) {
-        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problema.setTitle("Email ya registrado");
-        return problema;
+        return problema(HttpStatus.CONFLICT, "Email ya registrado", ex.getMessage());
     }
 
     @ExceptionHandler(CredencialesInvalidasException.class)
     public ProblemDetail credencialesInvalidas(CredencialesInvalidasException ex) {
-        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
-        problema.setTitle("Credenciales inválidas");
-        return problema;
+        return problema(HttpStatus.UNAUTHORIZED, "Credenciales inválidas", ex.getMessage());
+    }
+
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ProblemDetail recursoNoEncontrado(RecursoNoEncontradoException ex) {
+        return problema(HttpStatus.NOT_FOUND, "No encontrado", ex.getMessage());
+    }
+
+    @ExceptionHandler(AccesoDenegadoException.class)
+    public ProblemDetail accesoDenegado(AccesoDenegadoException ex) {
+        return problema(HttpStatus.FORBIDDEN, "Acceso denegado", ex.getMessage());
+    }
+
+    @ExceptionHandler(ReglaNegocioException.class)
+    public ProblemDetail reglaNegocio(ReglaNegocioException ex) {
+        return problema(HttpStatus.CONFLICT, "Operación no permitida", ex.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail conflictoDeDatos(DataIntegrityViolationException ex) {
-        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
-                HttpStatus.CONFLICT, "Los datos entran en conflicto con un registro existente");
-        problema.setTitle("Conflicto de datos");
-        return problema;
+        return problema(HttpStatus.CONFLICT, "Conflicto de datos",
+                "Los datos entran en conflicto con un registro existente");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -41,10 +50,15 @@ public class ManejadorErrores {
         ex.getBindingResult().getFieldErrors()
                 .forEach(error -> errores.putIfAbsent(error.getField(), error.getDefaultMessage()));
 
-        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST, "Uno o más campos no son válidos");
-        problema.setTitle("Datos inválidos");
-        problema.setProperty("errores", errores);
-        return problema;
+        ProblemDetail detalle = problema(HttpStatus.BAD_REQUEST, "Datos inválidos",
+                "Uno o más campos no son válidos");
+        detalle.setProperty("errores", errores);
+        return detalle;
+    }
+
+    private ProblemDetail problema(HttpStatus estado, String titulo, String mensaje) {
+        ProblemDetail detalle = ProblemDetail.forStatusAndDetail(estado, mensaje);
+        detalle.setTitle(titulo);
+        return detalle;
     }
 }
