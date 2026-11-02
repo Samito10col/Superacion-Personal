@@ -20,6 +20,13 @@ public class ManejadorErrores {
         return problema;
     }
 
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    public ProblemDetail credencialesInvalidas(CredencialesInvalidasException ex) {
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problema.setTitle("Credenciales inválidas");
+        return problema;
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail conflictoDeDatos(DataIntegrityViolationException ex) {
         ProblemDetail problema = ProblemDetail.forStatusAndDetail(
