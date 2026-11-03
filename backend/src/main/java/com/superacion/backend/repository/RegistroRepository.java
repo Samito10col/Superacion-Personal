@@ -21,6 +21,14 @@ public interface RegistroRepository extends JpaRepository<Registro, Long> {
     long countByAsignacionIdAndFechaBetweenAndEstadoNot(Long asignacionId, LocalDate desde,
                                                         LocalDate hasta, EstadoRegistro estado);
 
+    // Cierre de periodos: cuántos registros quedaron en un estado dado
+    long countByAsignacionIdAndFechaBetweenAndEstado(Long asignacionId, LocalDate desde,
+                                                     LocalDate hasta, EstadoRegistro estado);
+
+    // Cierre de periodos: ¿hay registros en ese estado (por ejemplo, apelaciones sin resolver)?
+    boolean existsByAsignacionIdAndFechaBetweenAndEstado(Long asignacionId, LocalDate desde,
+                                                         LocalDate hasta, EstadoRegistro estado);
+
     // Registros de todas las personas de un hábito en un rango de fechas
     @EntityGraph(attributePaths = {"asignacion", "asignacion.usuario"})
     List<Registro> findByAsignacionHabitoIdAndFechaBetweenOrderByFechaDescCreadoEnDesc(

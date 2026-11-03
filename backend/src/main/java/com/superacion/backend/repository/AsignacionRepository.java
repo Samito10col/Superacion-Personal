@@ -18,4 +18,8 @@ public interface AsignacionRepository extends JpaRepository<Asignacion, Long> {
     List<Asignacion> findByUsuarioIdAndActivaTrue(Long usuarioId);
 
     Optional<Asignacion> findByHabitoIdAndUsuarioId(Long habitoId, Long usuarioId);
+
+    // Todas las asignaciones que el cierre de periodos debe revisar
+    @EntityGraph(attributePaths = "habito")
+    List<Asignacion> findByActivaTrueAndHabitoActivoTrue();
 }
