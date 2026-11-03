@@ -76,6 +76,19 @@ public class Multa {
         this.motivoAnulacion = motivo;
     }
 
+    // RN-20: se marca pagada cuando los pagos confirmados alcanzan el monto
+    public void marcarPagada() {
+        this.estado = EstadoMulta.PAGADA;
+    }
+
+    public boolean perteneceA(Long usuarioId) {
+        return asignacion.getUsuario().getId().equals(usuarioId);
+    }
+
+    public Long getGrupoId() {
+        return asignacion.getHabito().getGrupo().getId();
+    }
+
     public int getFaltantes() {
         return Math.max(0, meta - cumplidos);
     }
