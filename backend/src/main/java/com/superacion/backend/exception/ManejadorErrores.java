@@ -6,6 +6,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,6 +37,12 @@ public class ManejadorErrores {
     @ExceptionHandler(ReglaNegocioException.class)
     public ProblemDetail reglaNegocio(ReglaNegocioException ex) {
         return problema(HttpStatus.CONFLICT, "Operación no permitida", ex.getMessage());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ProblemDetail archivoMuyGrande(MaxUploadSizeExceededException ex) {
+        return problema(HttpStatus.CONTENT_TOO_LARGE, "Archivo muy grande",
+                "La foto no puede pesar más de 5 MB");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
