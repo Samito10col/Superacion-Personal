@@ -62,8 +62,36 @@ public class Registro {
         this.creadoEn = Instant.now();
     }
 
+    public void aprobar(Usuario validador) {
+        this.estado = EstadoRegistro.APROBADO;
+        this.validadoPor = validador;
+        this.fechaValidacion = Instant.now();
+        this.motivoRechazo = null;
+    }
+
+    public void rechazar(Usuario validador, String motivo) {
+        this.estado = EstadoRegistro.RECHAZADO;
+        this.validadoPor = validador;
+        this.fechaValidacion = Instant.now();
+        this.motivoRechazo = motivo;
+    }
+
+    // RN-13: solo se permite una apelación por registro
+    public void apelar() {
+        this.estado = EstadoRegistro.APELADO;
+        this.apelado = true;
+    }
+
     public boolean tieneEvidencia() {
         return evidenciaRuta != null;
+    }
+
+    public boolean perteneceA(Long usuarioId) {
+        return asignacion.getUsuario().getId().equals(usuarioId);
+    }
+
+    public Long getGrupoId() {
+        return asignacion.getHabito().getGrupo().getId();
     }
 
     public Long getId() { return id; }
