@@ -17,6 +17,7 @@ function Navegacion() {
       {/* Solo sin sesión */}
       <Stack.Protected guard={!usuario}>
         <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="registro" options={{ title: 'Crear cuenta' }} />
       </Stack.Protected>
     </Stack>
   );

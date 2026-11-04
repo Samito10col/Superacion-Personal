@@ -20,6 +20,7 @@ type Sesion = {
   usuario: Usuario | null;
   cargando: boolean;
   iniciarSesion: (email: string, password: string) => Promise<void>;
+  registrarse: (nombre: string, email: string, password: string) => Promise<void>;
   cerrarSesion: () => Promise<void>;
 };
 
@@ -58,8 +59,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUsuario(respuesta.usuario);
   }
 
+  // Crea la cuenta y entra de una vez, sin pedir los datos otra vez
+  async function registrarse(nombre: string, email: string, password: string) {
+    await api('/api/usuarios', {
+      method: 'POST',
+      body: { nombre, email, password },
+    });
+    await iniciarSesion(email, password);
+  }
+
   return (
-    <SesionContext.Provider value={{ usuario, cargando, iniciarSesion, cerrarSesion }}>
+    <SesionContext.Provider value={{ usuario, cargando, iniciarSesion, registrarse, cerrarSesion }}>
       {children}
     </SesionContext.Provider>
   );
