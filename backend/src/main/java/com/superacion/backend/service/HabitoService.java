@@ -37,6 +37,11 @@ public class HabitoService {
     public HabitoResponse crear(Long grupoId, Long usuarioId, CrearHabitoRequest request) {
         MiembroGrupo admin = accesoGrupo.exigirAdmin(grupoId, usuarioId);
 
+        // Las fotos de evidencia están desactivadas por ahora (no tenemos almacenamiento en la nube)
+        if (request.modoVerificacion().requiereEvidencia()) {
+            throw new ReglaNegocioException("Las fotos de evidencia no están habilitadas. Usa AUTODECLARADO o VALIDACION_PAR");
+        }
+
         Frecuencia frecuencia = request.frecuencia();
         if (request.metaPorPeriodo() > frecuencia.metaMaxima()) {
             throw new ReglaNegocioException("Para un hábito " + frecuencia.name().toLowerCase()
