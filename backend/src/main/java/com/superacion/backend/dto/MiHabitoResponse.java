@@ -16,10 +16,13 @@ public record MiHabitoResponse(
         ModoVerificacion modoVerificacion,
         LocalDate vigenteDesde,
         LocalDate periodoActualInicio,
-        LocalDate periodoActualFin
+        LocalDate periodoActualFin,
+        int cumplidosEnPeriodo,   // registros del periodo actual que cuentan (sin los rechazados)
+        boolean registradoHoy     // ¿ya marcó "lo hice" hoy?
 ) {
 
-    public static MiHabitoResponse desde(Asignacion asignacion, LocalDate hoy) {
+    public static MiHabitoResponse desde(Asignacion asignacion, LocalDate hoy,
+                                         int cumplidosEnPeriodo, boolean registradoHoy) {
         Habito habito = asignacion.getHabito();
         Frecuencia frecuencia = habito.getFrecuencia();
         return new MiHabitoResponse(
@@ -34,7 +37,9 @@ public record MiHabitoResponse(
                 habito.getModoVerificacion(),
                 asignacion.getVigenteDesde(),
                 frecuencia.inicioDelPeriodo(hoy),
-                frecuencia.finDelPeriodo(hoy)
+                frecuencia.finDelPeriodo(hoy),
+                cumplidosEnPeriodo,
+                registradoHoy
         );
     }
 }

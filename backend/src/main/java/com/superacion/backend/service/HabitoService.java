@@ -8,6 +8,7 @@ import com.superacion.backend.model.*;
 import com.superacion.backend.repository.AsignacionRepository;
 import com.superacion.backend.repository.HabitoRepository;
 import com.superacion.backend.repository.MiembroGrupoRepository;
+import com.superacion.backend.repository.RegistroRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +22,18 @@ public class HabitoService {
     private final HabitoRepository habitoRepository;
     private final AsignacionRepository asignacionRepository;
     private final MiembroGrupoRepository miembroGrupoRepository;
+    private final RegistroRepository registroRepository;
     private final AccesoGrupo accesoGrupo;
 
     public HabitoService(HabitoRepository habitoRepository,
                          AsignacionRepository asignacionRepository,
                          MiembroGrupoRepository miembroGrupoRepository,
+                         RegistroRepository registroRepository,
                          AccesoGrupo accesoGrupo) {
         this.habitoRepository = habitoRepository;
         this.asignacionRepository = asignacionRepository;
         this.miembroGrupoRepository = miembroGrupoRepository;
+        this.registroRepository = registroRepository;
         this.accesoGrupo = accesoGrupo;
     }
 
@@ -120,7 +124,16 @@ public class HabitoService {
         LocalDate hoy = ZonaHoraria.hoy();
         return asignacionRepository.findByUsuarioIdAndActivaTrue(usuarioId).stream()
                 .filter(asignacion -> asignacion.getHabito().isActivo())
-                .map(asignacion -> MiHabitoResponse.desde(asignacion, hoy))
+                .map(asignacion -> {
+                    Frecuencia frecuencia = asignacion.getHabito().getFrecuencia();
+                    int cumplidos = (int) registroRepository.countByAsignacionIdAndFechaBetweenAndEstadoNot(
+                            asignacion.getId(),
+                            frecuencia.inicioDelPeriodo(hoy),
+                            frecuencia.finDelPeriodo(hoy),
+                            EstadoRegistro.RECHAZADO);
+                    boolean registradoHoy = registroRepository.existsByAsignacionIdAndFecha(asignacion.getId(), hoy);
+                    return MiHabitoResponse.desde(asignacion, hoy, cumplidos, registradoHoy);
+                })
                 .toList();
     }
 

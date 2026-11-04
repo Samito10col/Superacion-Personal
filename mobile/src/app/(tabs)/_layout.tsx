@@ -15,28 +15,36 @@ export default function PestanasLayout() {
         name="index"
         options={{
           title: 'Hoy',
-          tabBarIcon: ({ color, size }) => <Ionicons name="checkmark-circle-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="checkmark-circle-outline" size={size} color={color as string} />
+          ),
         }}
       />
       <Tabs.Screen
         name="grupos"
         options={{
           title: 'Grupos',
-          tabBarIcon: ({ color, size }) => <Ionicons name="people-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people-outline" size={size} color={color as string} />
+          ),
         }}
       />
       <Tabs.Screen
         name="multas"
         options={{
           title: 'Multas',
-          tabBarIcon: ({ color, size }) => <Ionicons name="cash-outline" size={size} color={color ?? colores.textoSuave} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cash-outline" size={size} color={color as string} />
+          ),
         }}
       />
       <Tabs.Screen
         name="perfil"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-circle-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-circle-outline" size={size} color={color as string} />
+          ),
         }}
       />
     </Tabs>
