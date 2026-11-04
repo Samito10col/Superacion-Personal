@@ -9,9 +9,9 @@ function Navegacion() {
 
   return (
     <Stack>
-      {/* Solo con sesión iniciada */}
+      {/* Solo con sesión iniciada: la app con pestañas */}
       <Stack.Protected guard={!!usuario}>
-        <Stack.Screen name="index" options={{ title: 'Superación Personal' }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack.Protected>
 
       {/* Solo sin sesión */}

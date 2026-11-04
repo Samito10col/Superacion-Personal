@@ -27,16 +27,23 @@ type Opciones = {
 
 export async function api<T>(ruta: string, opciones: Opciones = {}): Promise<T> {
   const token = await leer('token');
+  const esFormulario = typeof FormData !== 'undefined' && opciones.body instanceof FormData;
+
+  let cuerpo: BodyInit | undefined;
+  if (opciones.body !== undefined) {
+    cuerpo = esFormulario ? (opciones.body as FormData) : JSON.stringify(opciones.body);
+  }
 
   let respuesta: Response;
   try {
     respuesta = await fetch(`${API_URL}${ruta}`, {
       method: opciones.method ?? 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        // Con formularios, el celular pone el tipo de contenido por su cuenta
+        ...(esFormulario ? {} : { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: opciones.body !== undefined ? JSON.stringify(opciones.body) : undefined,
+      body: cuerpo,
     });
   } catch {
     throw new ApiError(0, 'No se pudo conectar con el servidor. Revisa tu conexión.');
